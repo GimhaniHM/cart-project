@@ -1,0 +1,20 @@
+The code imports necessary external libraries and local modules.
+TokenClaims is assumed to be a struct representing the claims inside a JSON Web Token (JWT).
+actix_web is the web framework for Rust.
+futures is used for working with asynchronous futures in Rust.
+jsonwebtoken is a library for working with JSON Web Tokens.
+
+The FromRequest trait allows you to create reusable request guards. In this case, it's used to create an authorization guard.
+The from_request function is implemented for AuthorizationService.
+It extracts the "Authorization" header from the request (_req.headers().get("Authorization")).
+If the header is found (Some(_)), it attempts to extract the JWT token from the header.
+The token is then decoded using the provided secret key and validated using the HS256 algorithm.
+If the token is valid, an instance of AuthorizationService is returned wrapped in a Result::Ok.
+If the token is invalid, an ErrorUnauthorized error is returned wrapped in a Result::Err.
+If there is no "Authorization" header (None), an ErrorUnauthorized error is returned indicating that the request is blocked.
+In summary, this code provides a middleware function for Actix web applications that can be used to authenticate requests based on JWT tokens provided in the "Authorization" header. It checks the validity of the token using a secret key and the HS256 algorithm, allowing authorized requests to proceed and blocking unauthorized ones.
+
+
+
+
+

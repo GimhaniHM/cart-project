@@ -1,13 +1,12 @@
 
-use actix_cors::Cors;
-use actix_web::{web::Data, HttpServer, App, http::header};
+use actix_web::{web::Data, HttpServer, App};
 
-use crate::{repository::mongodb_repo::MongoRepo};
+use crate::repository::mongodb_repo::MongoRepo;
 
 
 mod model;
 mod api;
-mod middleware;
+//mod middleware;
 mod repository;
 
 use api::{user_api, cart_api};
@@ -15,10 +14,6 @@ use api::{user_api, cart_api};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()>{
-    if std::env::var_os("RUST_LOG").is_none() {
-        std::env::set_var("RUST_LOG", "actix_web=info");
-    }
-    env_logger::init();
 
     let db = MongoRepo::init().await;
     let db_data = Data::new(db);
@@ -26,15 +21,6 @@ async fn main() -> std::io::Result<()>{
     println!("🚀 Server started successfully");
 
     HttpServer::new(move || {
-        let cors = Cors::default()
-            .allowed_origin("http://localhost:3000")
-            .allowed_methods(vec!["GET", "POST"])
-            .allowed_headers(vec![
-                header::CONTENT_TYPE,
-                header::AUTHORIZATION,
-                header::ACCEPT,
-            ])
-            .supports_credentials();
 
         App::new()
             .app_data(db_data.clone())

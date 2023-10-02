@@ -1,0 +1,21 @@
+The code imports necessary external libraries and local modules.
+actix_cors::Cors is used for enabling Cross-Origin Resource Sharing (CORS) support.
+actix_web is a web framework for Rust.
+MongoRepo seems to be a module for handling MongoDB operations.
+The code defines some local modules: model, api, middleware, and repository.
+Specific APIs for user and cart are imported from the api module.
+
+The main function is the entry point of the program.
+It sets up logging configurations and initializes a connection to a MongoDB database.
+The Actix HTTP server is configured inside the HttpServer::new closure.
+CORS is configured to allow requests from http://localhost:3000 with specific methods and headers.
+The MongoDB connection data is added to the application state using .app_data(db_data.clone()).
+API routes are configured using the configure method, where user_api::config and cart_api::config likely define the route handlers and endpoints for user and cart operations.
+The server is bound to IP address 127.0.0.1 and port 8060 using .bind(("127.0.0.1", 8060))?.
+The server is started and awaited using .run().await.
+In summary, this code initializes a web server using Actix web, configures CORS policies, establishes a connection to a MongoDB database, and sets up routes for user and cart APIs. When run, this server will listen for incoming requests and handle them according to the specified API routes and logic.
+
+
+
+
+
