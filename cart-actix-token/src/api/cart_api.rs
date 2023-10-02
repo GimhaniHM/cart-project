@@ -42,7 +42,7 @@ pub async fn create_cart(req: HttpRequest, db: Data<MongoRepo>, new_cart: Json<C
 }
 
 //Find all carts by id
-#[get("/all-cart/{id}")]
+#[get("/all-cart")]
 pub async fn get_all_carts(req: HttpRequest, db: Data<MongoRepo>) -> HttpResponse {
 
     let auth = req.headers().get("Authorization");
@@ -50,7 +50,7 @@ pub async fn get_all_carts(req: HttpRequest, db: Data<MongoRepo>) -> HttpRespons
     let token = split[1].trim();
 
     match db.list_all_carts_by_user(token).await {
-        Ok(result) => HttpResponse::Ok().json(json!({"status" : "success", "result" : result})),
+        Ok(result) => result,
         Err(error) =>  HttpResponse::ExpectationFailed().json(json!({"status" : "failed", "message" : error})), 
     }
 }
@@ -105,6 +105,8 @@ pub async fn get_cart(req: HttpRequest, db: Data<MongoRepo>, id: web::Path<Strin
         Err(error) =>  HttpResponse::ExpectationFailed().json(json!({"status" : "failed", "message" : error})),
     }
 }
+
+
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(create_cart)

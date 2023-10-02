@@ -2,7 +2,8 @@
 
 ////----------------------  START - Initial routes ----------------------------- ////
 
-use actix_web::{HttpResponse, Responder, get, web::{self, Data, Json}, post};
+use actix_web::{HttpResponse, Responder, get, web::{self, Data, Json}, post, HttpRequest};
+use mongodb::bson::oid::ObjectId;
 use serde_json::json;
 
 use crate::{repository::mongodb_repo::MongoRepo, model::user_model::{User, LoginUserSchema}};
@@ -47,6 +48,19 @@ pub async fn login_user(user: web::Json<LoginUserSchema>, db: Data<MongoRepo>) -
     user_details.await
 
 }
+
+// //handler to get user total
+// #[post("/get-user-total")]
+// pub async fn get_cart(req: HttpRequest, db: Data<MongoRepo>) -> HttpResponse {
+//     let auth = req.headers().get("Authorization");
+//     let split: Vec<&str> = auth.unwrap().to_str().unwrap().split("Bearer").collect();    
+//     let token = split[1].trim();
+
+//     match db.get_user_total(token).await {
+//         Ok(result) => HttpResponse::Ok().json(json!({"status" : "success", "result" : result})),
+//         Err(error) =>  HttpResponse::ExpectationFailed().json(json!({"status" : "failed", "message" : error})),
+//     }
+// }
 
 ////----------------------  END - User routes ----------------------------- ////
 

@@ -29,4 +29,14 @@ pub struct TokenClaims {
     pub exp: usize,
 }
 
+// //Total price structure for User
+// #[derive(Debug, Serialize, Deserialize, Clone)]
+// pub struct UserTotal {
+//     #[serde(rename = "_uid", skip_serializing_if = "Option::is_none")]
+//     pub id: Option<ObjectId>,
+//     #[serde(rename = "_oid", skip_serializing_if = "Option::is_none")]
+//     pub obj_id: Option<Vec<ObjectId>>,
+//     #[serde(rename = "_tot", skip_serializing_if = "Option::is_none")]
+//     pub total: Option<f64>
+// }
 

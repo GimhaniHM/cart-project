@@ -267,7 +267,7 @@ impl MongoRepo {
 
 
 //handler to list all the Todos specified to User
-    pub async fn list_all_carts_by_user(&self, token: &str) -> Result<Vec<Cart>, ErrorResponse> {
+    pub async fn list_all_carts_by_user(&self, token: &str) -> Result<HttpResponse, ErrorResponse> {
         match self.validate_user(token).await.unwrap(){
             Some(x) => {
 
@@ -286,10 +286,13 @@ impl MongoRepo {
 
                     let mut cart_vec = Vec::new();
 
+                    let mut user_total: f64 = 0.0;
+
                     while let Some(doc) = cart_doc.next().await {
 
                         match doc {
                             Ok(data) => {
+                                user_total = user_total + data.total.unwrap();
                                 cart_vec.push(data)
                             },
                             Err(err) => {
@@ -298,8 +301,10 @@ impl MongoRepo {
                         }
                     }    
 
-                println!("{:?}", cart_doc);
-                Ok(cart_vec)
+                println!("{:?}", user_total);
+                //println!("{:?}", cart_doc);
+               // Ok(cart_vec)
+               Ok(HttpResponse::Ok().json(json!({"status" : "success", "result" : cart_vec, "Total": user_total})))
             },
             None => {
                 Err(ErrorResponse {
@@ -323,9 +328,8 @@ impl MongoRepo {
                     Some(data) => {
 
                         let filter = doc! {"_id": cart_id};
-                        let cart_price = data.price;
 
-                        let update_total = cart_price * cart_data.qty;
+                        let update_total = data.price * cart_data.qty;
     
                         let new_doc = doc! {
                             "$set":
@@ -423,5 +427,56 @@ pub async fn delete_cart(&self, token: &str, cart_id: String) -> Result<DeleteRe
         })
     }
 }
+
+// //handler to get user total 
+// pub async fn get_user_total(&self, token: &str) -> Result<UpdateResult, ErrorResponse> {
+//     match self.validate_user(token).await.unwrap(){
+//         Some(_x) => {
+
+//             let _user_id = x.id.unwrap().to_string();
+
+//             //let cart_id = ObjectId::parse_str(cart_id).unwrap();
+
+//             match self.finding_cart(&token, &cart_id).await.unwrap() {
+//                 Some(data) => {
+
+//                     let filter = doc! {"_id": cart_id};
+
+//                     let update_total = data.price * cart_data.qty;
+
+//                     let new_doc = doc! {
+//                         "$set":
+//                             {
+//                                 "qty": cart_data.qty,
+//                                 "_total": update_total
+//                             },
+//                     };
+//                     let updated_doc = self
+//                         .cart_col
+//                         .update_one(filter, new_doc, None)
+//                         .await
+//                         .ok()
+//                         .expect("Error updating cart");
+            
+//                     Ok(updated_doc)
+//                 },
+//                 None => {
+//                     return Err(ErrorResponse {
+//                             message: "Todo Not found".to_owned(),
+//                             status: false
+//                     })
+//                 }
+//             }
+//         },
+//         None => {
+//             Err(ErrorResponse {
+//                 status: false,
+//                 message: "Not found user".to_string(),
+//             })
+//         }
+//     }
+// }
+
+
 
 }
